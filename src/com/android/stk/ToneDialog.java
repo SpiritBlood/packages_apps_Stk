@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2009, 2013 The Linux Foundation. All rights reserved.
- * Not a Contribution.
  * Copyright (C) 2007 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +39,6 @@ public class ToneDialog extends Activity {
     ToneSettings settings = null;
     TonePlayer player = null;
     boolean mIsResponseSent = false;
-    private int mSlotId = 0;
 
     /**
      * Handler used to stop tones from playing when the duration ends.
@@ -129,14 +126,12 @@ public class ToneDialog extends Activity {
         }
         toneMsg = intent.getParcelableExtra("TEXT");
         settings = intent.getParcelableExtra("TONE");
-        mSlotId = intent.getIntExtra(StkAppService.SLOT_ID, 0);
     }
 
     private void sendResponse(int resId) {
         Bundle args = new Bundle();
         args.putInt(StkAppService.OPCODE, StkAppService.OP_RESPONSE);
         args.putInt(StkAppService.RES_ID, resId);
-        args.putInt(StkAppService.SLOT_ID, mSlotId);
         startService(new Intent(this, StkAppService.class).putExtras(args));
         mIsResponseSent = true;
     }

@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2011-2013 The Linux Foundation. All rights reserved.
- * Not a Contribution.
  * Copyright (C) 2007 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -56,7 +54,6 @@ public class StkInputActivity extends Activity implements View.OnClickListener,
     private View mYesNoLayout = null;
     private View mNormalLayout = null;
     private Input mStkInput = null;
-    private int mSlotId = 0;
 
     // Constants
     private static final int STATE_TEXT = 1;
@@ -107,7 +104,6 @@ public class StkInputActivity extends Activity implements View.OnClickListener,
             break;
         }
 
-        cancelTimeOut();
         sendResponse(StkAppService.RES_ID_INPUT, input, false);
         finish();
     }
@@ -141,7 +137,6 @@ public class StkInputActivity extends Activity implements View.OnClickListener,
         Intent intent = getIntent();
         if (intent != null) {
             mStkInput = intent.getParcelableExtra("INPUT");
-            mSlotId = intent.getIntExtra(StkAppService.SLOT_ID, 0);
             if (mStkInput == null) {
                 finish();
             } else {
@@ -171,14 +166,14 @@ public class StkInputActivity extends Activity implements View.OnClickListener,
     @Override
     public void onPause() {
         super.onPause();
-        //do not cancel the timer
+
+        cancelTimeOut();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
         case KeyEvent.KEYCODE_BACK:
-            cancelTimeOut();
             sendResponse(StkAppService.RES_ID_BACKWARD, null, false);
             finish();
             break;
@@ -198,7 +193,6 @@ public class StkInputActivity extends Activity implements View.OnClickListener,
             args.putString(StkAppService.INPUT, input);
         }
         args.putBoolean(StkAppService.HELP, help);
-        args.putInt(StkAppService.SLOT_ID, mSlotId);
         mContext.startService(new Intent(mContext, StkAppService.class)
                 .putExtras(args));
     }
@@ -226,12 +220,10 @@ public class StkInputActivity extends Activity implements View.OnClickListener,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case StkApp.MENU_ID_END_SESSION:
-            cancelTimeOut();
             sendResponse(StkAppService.RES_ID_END_SESSION);
             finish();
             return true;
         case StkApp.MENU_ID_HELP:
-            cancelTimeOut();
             sendResponse(StkAppService.RES_ID_INPUT, "", true);
             finish();
             return true;
